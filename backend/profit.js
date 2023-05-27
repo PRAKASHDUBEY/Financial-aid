@@ -37,7 +37,7 @@ module.exports = function (rsi1, rsi2, closingPrice1, closingPrice2, si, ei){
     let n=indices.length;
     for(let j=1;j<n;j++)
     {
-        let sum=(closingPrice1[j]-closingPrice1[j-1])+(closingPrice2[j-1]-closingPrice2[j]);
+        let sum=(closingPrice1[indices[j]]-closingPrice1[indices[j-1]])+(closingPrice2[indices[j-1]]-closingPrice2[indices[j]]);
         if(sum<0)
         {
             sum=0-sum;
