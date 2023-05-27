@@ -4,7 +4,7 @@ const correlationCoefficient = require('./Correlation.js');
 const netProfit = require('./profit.js');
 
 class Pair {
-    constructor(pair1, pair2, closingPrice1, closingPrice2, date, correlation, rsi1, rsi2, profit) {
+    constructor(pair1, pair2, closingPrice1, closingPrice2, date, correlation, rsi1, rsi2, profit, period) {
         this.pair1 = pair1;
         this.pair2 = pair2;
         this.profit = profit;
@@ -14,12 +14,12 @@ class Pair {
         this.rsi1 = rsi1;
         this.rsi2 = rsi2;
         this.date = date;
+        this.period = period
     }
 
 }
 module.exports = function main(date) {
     let index = indexLimit(date);
-
     const FilterPair = [];
 
     let i = 0;
@@ -28,19 +28,25 @@ module.exports = function main(date) {
         while (j < 50) {
             let pair1 = Stocks[i];
             let pair2 = Stocks[j];
-
-            let correlation = correlationCoefficient(pair1.CLOSE, pair2.CLOSE, pair1.CLOSE.length);
+            let closingPrice1 = pair1.CLOSE.slice(index.startIndex, index.endIndex+1);
+            let closingPrice2 = pair2.CLOSE.slice(index.startIndex, index.endIndex+1);
+            let date = pair1.DATE.slice(index.startIndex, index.endIndex+1);
+            
+            let correlation = correlationCoefficient(closingPrice1, closingPrice2, closingPrice2.length);
             correlation = parseFloat(correlation).toFixed(3);
 
             //Filter Pair
             if (correlation >= 0.7) {
 
+                let cP1 = pair1.CLOSE.slice(index.startIndex-14, index.endIndex+1);
+                let cp2 = pair2.CLOSE.slice(index.startIndex-14, index.endIndex+1);
+
                 const inputRSI1 = {
-                    values: pair1.CLOSE,
+                    values: cP1,
                     period: 14
                 };
                 const inputRSI2 = {
-                    values: pair2.CLOSE,
+                    values: cp2,
                     period: 14
                 };
                 const rsi1 = indicators.RSI.calculate(inputRSI1);
@@ -48,8 +54,8 @@ module.exports = function main(date) {
 
 
 
-                let profit = netProfit(rsi1, rsi2, pair1.CLOSE, pair2.CLOSE, index.si, index.ei);
-                const pairdata = new Pair(pair1.Symbol, pair2.Symbol, pair1.CLOSE, pair2.CLOSE, pair1.DATE, correlation, rsi1, rsi2, profit);
+                let trade = netProfit(rsi1, rsi2, closingPrice1, closingPrice2, 0, closingPrice2.length-1);
+                const pairdata = new Pair(pair1.Symbol, pair2.Symbol, closingPrice1, closingPrice2, date, correlation, rsi1, rsi2, trade.value, trade.period);
                 FilterPair.push(pairdata);
             }
             j++;
@@ -66,29 +72,31 @@ function indexLimit(date){
     var dt = new Date(date.startDate);
     var dt2 = new Date(date.endDate);
 
-    var datearr = Stocks[0].DATE;
+    var dateArr = Stocks[0].DATE;
 
     
-    let indexe; let indexs;
+    let endIndex; let startIndex;
 
-    for (let i = 0; i < datearr.length; i++) {
+    for (let i = dateArr.length-1; i > 0; i--) {
 
 
-        if (new Date(datearr[i]) <= dt2) {
-            indexs = i; break;
+        if (new Date(dateArr[i]) <= dt2) {
+            endIndex = i; break;
         }
         
 
     }
-    for (let i = 0; i < datearr.length; i++) {
+    for (let i = 0; i < dateArr.length; i++) {
 
 
-        if (new Date(datearr[i]) <= dt) { indexe = i; break; }
+        if (new Date(dateArr[i]) >= dt) { 
+            startIndex = i; break; 
+        }
         
     }
     return{
-        si:indexs,
-        ei:indexe
+        startIndex: startIndex,
+        endIndex: endIndex
     }
 
 }

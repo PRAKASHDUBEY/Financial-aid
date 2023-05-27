@@ -14,10 +14,9 @@ app.get("/", (req, res)=>{
     res.send("API Working")
 });
 
-app.post("/api", async (req, res) => {
-    const body = req.body;
-    
-    var data = main(body);
+app.get("/api", async (req, res) => {
+    const date = req.query;
+    var data = main(date);
     res.status(200).json({
         msg:'Success',
         data:data

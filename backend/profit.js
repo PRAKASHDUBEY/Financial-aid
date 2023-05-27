@@ -44,5 +44,8 @@ module.exports = function (rsi1, rsi2, closingPrice1, closingPrice2, si, ei){
         }
         profit+=sum;
     }
-    return profit;
+    return {
+        value :profit,
+        period: indices
+    };
 }
