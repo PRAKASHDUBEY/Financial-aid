@@ -66,11 +66,10 @@ function deleteTable(bodyname) {
   var tableRows = elmtTable.getElementsByTagName("tr");
   var rowCount = tableRows.length;
 
-  for (var x = rowCount-1; x >=0; x--) {
-    console.log(tableRows[x],x) 
+  for (var x = rowCount-1; x >=0; x--) { 
     elmtTable.removeChild(tableRows[x]);
   }
-  // elmtTable.removeChild(tableRows[0]);
+  
 }
 
 function selectRowToInput() {
