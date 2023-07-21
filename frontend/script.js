@@ -48,7 +48,7 @@ async function API(startDate, endDate) {
   let date = `startDate=${startDate}&endDate=${endDate}`;
   console.log(dates);
   const data = await fetch(
-    "https://pair-trade-7tzhu537fa-el.a.run.app/api?" + date,
+    "https://pair-trade.onrender.com/api?" + date,
     {
       method: "GET",
       headers: {
@@ -220,6 +220,7 @@ function deleteTableColumn() {
 function detailTable(col0, col1, col2, col3) {
   var tableBody = document.getElementById("thbody");
   let k = 0;
+  let z = 1;
   col0.forEach(function (value, i) {
     var row = document.createElement("tr");
     row.style.display = "flex";
@@ -240,10 +241,12 @@ function detailTable(col0, col1, col2, col3) {
     var pro = document.createElement("th");
     if (i == col3[k]) {
       k++;
-      pro.appendChild(document.createTextNode("Trade " + k));
-      
+      z=1;
+      pro.appendChild(document.createTextNode("Day " + z));
+      z+=1
     } else {
-      pro.appendChild(document.createTextNode("Trade " + k));
+      pro.appendChild(document.createTextNode("Day " + z));
+      z+=1
     }
     row.appendChild(pro);
 
